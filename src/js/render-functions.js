@@ -3,6 +3,7 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const gallery = document.querySelector('.gallery');
 const loader = document.querySelector('.loader');
+export const LoadMoreBtn = document.querySelector('.gallery-btn');
 
 export function createGallery(images) {
   const murkUp = images
@@ -63,4 +64,12 @@ export function showLoader() {
 
 export function hideLoader() {
   loader.style.display = 'none';
+}
+
+export function showLoadMoreButton() {
+  LoadMoreBtn.classList.add('load-more-btn');
+}
+
+export function hideLoadMoreButton() {
+  LoadMoreBtn.classList.remove('load-more-btn');
 }

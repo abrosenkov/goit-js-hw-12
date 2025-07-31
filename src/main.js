@@ -7,17 +7,24 @@ import {
   clearGallery,
   showLoader,
   hideLoader,
+  showLoadMoreButton,
+  hideLoadMoreButton,
+  LoadMoreBtn,
 } from './js/render-functions';
+
+let page = 1;
+let totalPages = 0;
+let userQuery;
 
 const form = document.querySelector('.form');
 const searchBtn = document.querySelector('button[type="submit"]');
 
 const searchInput = document.querySelector('input[name="search-text"]');
 
-export async function OnSubmit(event) {
+async function OnSubmit(event) {
   event.preventDefault();
 
-  const userQuery = searchInput.value.trim();
+  userQuery = searchInput.value.trim();
 
   if (userQuery === '') {
     iziToast.error({
@@ -36,11 +43,19 @@ export async function OnSubmit(event) {
   } else {
     clearGallery();
     showLoader();
+    showLoadMoreButton();
     searchBtn.disabled = true;
   }
 
   try {
-    const queryData = await getImagesByQuery(userQuery);
+    page = 1;
+    console.log(page);
+
+    const queryData = await getImagesByQuery(userQuery, page);
+
+    totalPages = queryData.total;
+    console.log(totalPages);
+
     if (!queryData.hits.length) {
       iziToast.error({
         title: '',
@@ -69,12 +84,28 @@ export async function OnSubmit(event) {
       position: 'topRight',
     });
   } finally {
-    setTimeout(() => {
-      form.reset();
-    }, 1000);
+    form.reset();
     searchBtn.disabled = false;
     hideLoader();
   }
 }
 
+async function onClickLoadBtn() {
+  page += 1;
+
+  try {
+    console.log(page);
+    const moreImgs = await getImagesByQuery(userQuery, page);
+    createGallery(moreImgs.hits);
+    hideLoadMoreButton();
+    showLoader();
+  } catch {
+  } finally {
+    hideLoader();
+    showLoadMoreButton();
+  }
+}
+
 form.addEventListener('submit', OnSubmit);
+
+LoadMoreBtn.addEventListener('click', onClickLoadBtn);

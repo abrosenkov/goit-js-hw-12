@@ -150,3 +150,11 @@ button[type="submit"]:disabled {
         width: 100%;
     }
 }
+
+.gallery-btn {
+    display: none;
+}
+
+.load-more-btn {
+    display: block;
+}
