@@ -73,8 +73,8 @@ async function OnSubmit(event) {
       });
 
       return;
-    } else {
     }
+
     createGallery(queryData.hits);
   } catch {
     iziToast.error({
@@ -106,7 +106,6 @@ async function onClickLoadBtn() {
     const moreImgs = await getImagesByQuery(userQuery, page);
     createGallery(moreImgs.hits);
     hideLoadMoreButton();
-    showLoader();
   } catch {
     iziToast.error({
       title: '',
