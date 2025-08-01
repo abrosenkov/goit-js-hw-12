@@ -1,6 +1,8 @@
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 
+import { perPage } from './js/pixabay-api';
+
 import { getImagesByQuery } from './js/pixabay-api';
 import {
   createGallery,
@@ -9,11 +11,12 @@ import {
   hideLoader,
   showLoadMoreButton,
   hideLoadMoreButton,
-  LoadMoreBtn,
+  loadMoreBtn,
 } from './js/render-functions';
 
 let page = 1;
-let totalPages = 0;
+let totalHits = 0;
+let totalPages;
 let userQuery;
 
 const form = document.querySelector('.form');
@@ -43,18 +46,17 @@ async function OnSubmit(event) {
   } else {
     clearGallery();
     showLoader();
-    showLoadMoreButton();
+    hideLoadMoreButton();
     searchBtn.disabled = true;
   }
 
   try {
     page = 1;
-    console.log(page);
 
     const queryData = await getImagesByQuery(userQuery, page);
 
-    totalPages = queryData.total;
-    console.log(totalPages);
+    totalHits = queryData.total;
+    totalPages = Math.ceil(totalHits / perPage);
 
     if (!queryData.hits.length) {
       iziToast.error({
@@ -71,6 +73,7 @@ async function OnSubmit(event) {
       });
 
       return;
+    } else {
     }
     createGallery(queryData.hits);
   } catch {
@@ -86,26 +89,66 @@ async function OnSubmit(event) {
   } finally {
     form.reset();
     searchBtn.disabled = false;
+    if (page < totalPages) {
+      showLoadMoreButton();
+    } else {
+      hideLoadMoreButton();
+    }
     hideLoader();
   }
 }
 
 async function onClickLoadBtn() {
+  showLoader();
   page += 1;
 
   try {
-    console.log(page);
     const moreImgs = await getImagesByQuery(userQuery, page);
     createGallery(moreImgs.hits);
     hideLoadMoreButton();
     showLoader();
   } catch {
+    iziToast.error({
+      title: '',
+      color: 'red',
+      messageSize: '18',
+      icon: false,
+      progressBar: false,
+      message: '❌ Sorry, network Error',
+      position: 'topRight',
+    });
   } finally {
     hideLoader();
-    showLoadMoreButton();
+    scrolling();
+
+    if (page < totalPages) {
+      showLoadMoreButton();
+    } else {
+      iziToast.info({
+        title: '',
+        color: 'red',
+        messageSize: '18',
+        icon: false,
+        progressBar: false,
+        message: `We're sorry, but you've reached the end of search results.`,
+        position: 'topRight',
+      });
+    }
+  }
+}
+
+function scrolling() {
+  const scrollElem = document.querySelector('.list-item');
+
+  if (scrollElem) {
+    const itemHeight = scrollElem.getBoundingClientRect().height;
+    window.scrollBy({
+      top: itemHeight * 2,
+      behavior: 'smooth',
+    });
   }
 }
 
 form.addEventListener('submit', OnSubmit);
 
-LoadMoreBtn.addEventListener('click', onClickLoadBtn);
+loadMoreBtn.addEventListener('click', onClickLoadBtn);

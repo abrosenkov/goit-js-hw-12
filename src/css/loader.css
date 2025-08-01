@@ -25,7 +25,7 @@
     display: none;
     width: 100px;
     height: 100px;;
-    position: absolute;
+    position: fixed;
     left:45%;
     top: 45%;
     transform: translate(50% 50%);
