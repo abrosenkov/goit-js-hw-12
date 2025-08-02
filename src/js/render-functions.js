@@ -5,6 +5,12 @@ const gallery = document.querySelector('.gallery');
 const loader = document.querySelector('.loader');
 export const loadMoreBtn = document.querySelector('.gallery-btn');
 
+const lightbox = new SimpleLightbox('.item-img-link', {
+  captionsData: 'alt',
+  captionDelay: 250,
+  captionPosition: 'bottom',
+});
+
 export function createGallery(images) {
   const murkUp = images
     .map(elem => {
@@ -46,11 +52,6 @@ export function createGallery(images) {
 
   gallery.insertAdjacentHTML('beforeend', murkUp);
 
-  const lightbox = new SimpleLightbox('.item-img-link', {
-    captionsData: 'alt',
-    captionDelay: 250,
-    captionPosition: 'bottom',
-  });
   lightbox.refresh();
 }
 
