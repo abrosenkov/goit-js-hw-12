@@ -2,8 +2,8 @@ import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 
 import { perPage } from './js/pixabay-api';
-
 import { getImagesByQuery } from './js/pixabay-api';
+
 import {
   createGallery,
   clearGallery,
@@ -21,7 +21,6 @@ let userQuery;
 
 const form = document.querySelector('.form');
 const searchBtn = document.querySelector('button[type="submit"]');
-
 const searchInput = document.querySelector('input[name="search-text"]');
 
 async function OnSubmit(event) {
@@ -40,22 +39,20 @@ async function OnSubmit(event) {
       progressBar: false,
     });
 
-    form.reset();
-
     return;
-  } else {
-    clearGallery();
-    showLoader();
-    hideLoadMoreButton();
-    searchBtn.disabled = true;
   }
+
+  clearGallery();
+  showLoader();
+  hideLoadMoreButton();
+  searchBtn.disabled = true;
 
   try {
     page = 1;
 
     const queryData = await getImagesByQuery(userQuery, page);
 
-    totalHits = queryData.total;
+    totalHits = queryData.totalHits;
     totalPages = Math.ceil(totalHits / perPage);
 
     if (!queryData.hits.length) {
@@ -71,7 +68,6 @@ async function OnSubmit(event) {
           '❌ Sorry, there are no images matching your search query. Please try again!',
         position: 'topRight',
       });
-
       return;
     }
 
@@ -87,14 +83,14 @@ async function OnSubmit(event) {
       position: 'topRight',
     });
   } finally {
-    form.reset();
     searchBtn.disabled = false;
+    hideLoader();
+
     if (page < totalPages) {
       showLoadMoreButton();
     } else {
       hideLoadMoreButton();
     }
-    hideLoader();
   }
 }
 
@@ -105,7 +101,7 @@ async function onClickLoadBtn() {
   try {
     const moreImgs = await getImagesByQuery(userQuery, page);
     createGallery(moreImgs.hits);
-    hideLoadMoreButton();
+
   } catch {
     iziToast.error({
       title: '',
@@ -132,6 +128,7 @@ async function onClickLoadBtn() {
         message: `We're sorry, but you've reached the end of search results.`,
         position: 'topRight',
       });
+      hideLoadMoreButton();
     }
   }
 }
@@ -149,5 +146,4 @@ function scrolling() {
 }
 
 form.addEventListener('submit', OnSubmit);
-
 loadMoreBtn.addEventListener('click', onClickLoadBtn);
