@@ -1,8 +1,7 @@
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 
-import { perPage } from './js/pixabay-api';
-import { getImagesByQuery } from './js/pixabay-api';
+import { perPage, getImagesByQuery } from './js/pixabay-api';
 
 import {
   createGallery,
@@ -16,14 +15,14 @@ import {
 
 let page = 1;
 let totalHits = 0;
-let totalPages;
-let userQuery;
+let totalPages = 0;
+let userQuery = '';
 
 const form = document.querySelector('.form');
 const searchBtn = document.querySelector('button[type="submit"]');
 const searchInput = document.querySelector('input[name="search-text"]');
 
-async function OnSubmit(event) {
+async function onSubmit(event) {
   event.preventDefault();
 
   userQuery = searchInput.value.trim();
@@ -59,15 +58,14 @@ async function OnSubmit(event) {
       iziToast.error({
         title: '',
         color: 'red',
-        messageSize: '18',
-        icon: false,
-        maxWidth: '432px',
-        minHeight: '88px',
-        progressBar: false,
         message:
           '❌ Sorry, there are no images matching your search query. Please try again!',
         position: 'topRight',
+        messageSize: '18',
+        icon: false,
+        progressBar: false,
       });
+
       return;
     }
 
@@ -95,13 +93,14 @@ async function OnSubmit(event) {
 }
 
 async function onClickLoadBtn() {
-  showLoader();
   page += 1;
+
+  hideLoadMoreButton();
+  showLoader();
 
   try {
     const moreImgs = await getImagesByQuery(userQuery, page);
     createGallery(moreImgs.hits);
-
   } catch {
     iziToast.error({
       title: '',
@@ -128,7 +127,6 @@ async function onClickLoadBtn() {
         message: `We're sorry, but you've reached the end of search results.`,
         position: 'topRight',
       });
-      hideLoadMoreButton();
     }
   }
 }
@@ -145,5 +143,5 @@ function scrolling() {
   }
 }
 
-form.addEventListener('submit', OnSubmit);
+form.addEventListener('submit', onSubmit);
 loadMoreBtn.addEventListener('click', onClickLoadBtn);
