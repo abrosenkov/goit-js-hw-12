@@ -52,6 +52,7 @@ export function createGallery(images) {
 
   gallery.insertAdjacentHTML('beforeend', murkUp);
 
+  lightbox.refresh();
 }
 
 export function clearGallery() {
