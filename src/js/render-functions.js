@@ -30,19 +30,19 @@ export function createGallery(images) {
       </a>
       <div class="img-info-wrap">
         <div class="img-info">
-          <p class="img-info-title">Likes</p>
+
           <p class="img-info-content">${likes}</p>
         </div>
         <div class="img-info">
-          <p class="img-info-title">Views</p>
+
           <p class="img-info-content">${views}</p>
         </div>
         <div class="img-info">
-          <p class="img-info-title">Comments</p>
+
           <p class="img-info-content">${comments}</p>
         </div>
         <div class="img-info">
-          <p class="img-info-title">Downloads</p>
+
           <p class="img-info-content">${downloads}</p>
         </div>
       </div>
@@ -52,7 +52,6 @@ export function createGallery(images) {
 
   gallery.insertAdjacentHTML('beforeend', murkUp);
 
-  lightbox.refresh();
 }
 
 export function clearGallery() {
